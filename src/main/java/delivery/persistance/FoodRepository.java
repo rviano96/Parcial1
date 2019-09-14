@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FoodRepository  extends JpaRepository<Food, Integer> {
+    //TODO
+    // -Definir metodos que sean necesarios
 }

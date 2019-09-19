@@ -17,8 +17,7 @@ public class Food {
     // unidad: porcion, gramos, etc
     private String unit;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="restaurant_id")
+    @ManyToOne
     private Restaurant restaurant;
 
     public Restaurant getRestaurant() {

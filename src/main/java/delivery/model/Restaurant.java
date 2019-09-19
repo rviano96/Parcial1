@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="restaurants")
+@Table(name = "restaurants")
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "restaurant_id")
     private int id;
     //nombre
     private String name;
@@ -23,8 +24,9 @@ public class Restaurant {
     // puntuacion
     private double rating;
     // comidas
-    @OneToMany(mappedBy = "restaurant",cascade = {CascadeType.ALL},orphanRemoval = true)
-   private List<Food>  foods = new ArrayList<>();
+
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private List<Food> foods = new ArrayList<>();
 
     public List<Food> getFoods() {
         return foods;
@@ -81,7 +83,6 @@ public class Restaurant {
     public void setRating(double rating) {
         this.rating = rating;
     }
-
 
 
 }

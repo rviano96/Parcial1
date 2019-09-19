@@ -79,4 +79,16 @@ public class FoodRestController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/restaurant")
+    public ResponseEntity<List<Food>> findFoodByRestaurantName(@RequestParam( value = "restaurant") String restaurantName) {
+
+        try {
+            return new ResponseEntity<>(iFoodBusiness.findFoodByRestaurantName(restaurantName) ,HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -4,7 +4,6 @@ package delivery.business;
 import delivery.business.Exceptions.BusinessException;
 import delivery.business.Exceptions.NotFoundException;
 import delivery.model.Food;
-import delivery.model.Restaurant;
 
 import java.util.List;
 
@@ -44,4 +43,12 @@ public interface IFoodBusiness {
      * @throws NotFoundException
      */
     public void remove(int idFood) throws BusinessException, NotFoundException;
+
+    /**
+     * @description Devuelve la lista de comidas de X restaurante
+     * @return lista de Food
+     * @param restaurantName: El nombre del restaurant a buscar
+     * @throws BusinessException
+     */
+    public List<Food> findFoodByRestaurantName(String restaurantName) throws BusinessException, NotFoundException;
 }

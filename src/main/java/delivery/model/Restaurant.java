@@ -23,11 +23,7 @@ public class Restaurant {
     // puntuacion
     private double rating;
     // comidas
-    @ManyToMany(cascade = {CascadeType.MERGE })
-    @JoinTable(name = "restaurants_foods",
-            joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "food_id",
-                    referencedColumnName = "id"))
+    @OneToMany(mappedBy = "restaurant",cascade = {CascadeType.ALL},orphanRemoval = true)
    private List<Food>  foods = new ArrayList<>();
 
     public List<Food> getFoods() {

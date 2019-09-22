@@ -79,4 +79,20 @@ public class FoodBusiness implements IFoodBusiness {
         }
 
     }
+
+    @Override
+    public List<Food> findFoodByRestaurantName(String restaurantName) throws BusinessException, NotFoundException {
+        Optional<List<Food>> op;
+        try{
+            op = foodDao.findFoodByRestaurantName(restaurantName);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            throw new BusinessException(e);
+        }
+        if (!op.isPresent())
+            throw new NotFoundException("Ningun hay comidas para el restaurant: " + restaurantName);
+        return op.get();
+    }
+
+
 }

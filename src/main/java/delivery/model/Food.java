@@ -17,6 +17,17 @@ public class Food {
     // unidad: porcion, gramos, etc
     private String unit;
 
+    @ManyToOne
+    private Restaurant restaurant;
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
     public int getId() {
         return id;
     }

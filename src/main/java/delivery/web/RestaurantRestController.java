@@ -45,7 +45,9 @@ public class RestaurantRestController {
     @PutMapping("")
     public ResponseEntity<String>update(@RequestBody Restaurant restaurant) {
         try {
-            restaurantBusiness.save(restaurant);
+           // Restaurant rst = restaurantBusiness.load(restaurant.getId());
+
+            restaurantBusiness.update(restaurant);
             return new ResponseEntity<String>(HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -98,9 +100,9 @@ public class RestaurantRestController {
 
     }
     @GetMapping("/mejorPuntaje")
-    public ResponseEntity<Restaurant> findFirstByRating(@RequestParam(value="rating") double rating) {
+    public ResponseEntity<Restaurant> findFirstByOrderByRatingDesc() {
         try {
-            return new ResponseEntity<Restaurant>(restaurantBusiness.findFirstByRating(rating) ,HttpStatus.OK);
+            return new ResponseEntity<Restaurant>(restaurantBusiness.findFirstByOrderByRatingDesc() ,HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<Restaurant>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {
@@ -116,6 +118,17 @@ public class RestaurantRestController {
             return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+
+    }
+    @GetMapping("/abiertos")
+    public ResponseEntity<List<Restaurant>> findByOpeningTimeGreaterThanOrEqualTo(@RequestParam(value="hora") String hour) {
+        try {
+            return new ResponseEntity<List<Restaurant>>(restaurantBusiness.findAllByOpeningTimeLessThan(hour) ,HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<List<Restaurant>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<List<Restaurant>>(HttpStatus.NOT_FOUND);
         }
 
     }

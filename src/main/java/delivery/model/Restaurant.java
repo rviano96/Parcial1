@@ -1,16 +1,20 @@
 package delivery.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "restaurants")
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "restaurant_id")
     private int id;
     //nombre
     private String name;
@@ -24,15 +28,15 @@ public class Restaurant {
     // puntuacion
     private double rating;
     // comidas
+    @OneToMany(cascade = {CascadeType.MERGE})
+    @JoinColumn(name="restaurant_id")
+    private Set<Food> foods;
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<Food> foods = new ArrayList<>();
-
-    public List<Food> getFoods() {
+    public Set<Food> getFoods() {
         return foods;
     }
 
-    public void setFoods(List<Food> foods) {
+    public void setFoods(Set<Food> foods) {
         this.foods = foods;
     }
 

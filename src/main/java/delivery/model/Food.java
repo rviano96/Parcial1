@@ -1,5 +1,8 @@
 package delivery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 @Entity
@@ -17,8 +20,12 @@ public class Food {
     // unidad: porcion, gramos, etc
     private String unit;
 
-    @ManyToOne
+    //restaurant
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.ALL})
+    @JoinColumn(name="restaurant_id")
+    @JsonIgnore
     private Restaurant restaurant;
+
 
     public Restaurant getRestaurant() {
         return restaurant;

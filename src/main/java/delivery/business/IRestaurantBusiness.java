@@ -5,6 +5,7 @@ import delivery.business.Exceptions.BusinessException;
 import delivery.business.Exceptions.NotFoundException;
 import delivery.model.Restaurant;
 
+import java.time.LocalTime;
 import java.util.List;
 
 public interface IRestaurantBusiness {
@@ -55,12 +56,8 @@ public interface IRestaurantBusiness {
      */
     public void remove(int idRestaurant) throws BusinessException, NotFoundException;
 
-    /**
-     * @description Devuelve el restaurante con mejor puntaje.
-     * @return restaurant
-     * @throws BusinessException
-     */
-    public Restaurant findFirstByRating(double rating) throws BusinessException, NotFoundException;
+
+    public Restaurant findFirstByOrderByRatingDesc() throws BusinessException, NotFoundException;
 
     /**
      * @description Busca los restaurants que tengan la comida "food"
@@ -80,5 +77,13 @@ public interface IRestaurantBusiness {
      */
     public String findAddressByName(String restaurantName) throws BusinessException, NotFoundException;
 
+    /**
+     * @Description Devuelve una lista de restaurants que esten abiertos en el horario que le paso como parametro
+     * @param hour
+     * @return
+     * @throws BusinessException
+     * @throws NotFoundException
+     */
+    public List<Restaurant> findAllByOpeningTimeLessThan(String hour) throws BusinessException, NotFoundException;
 
 }

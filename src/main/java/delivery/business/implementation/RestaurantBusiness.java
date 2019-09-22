@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,17 +81,17 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     }
 
     @Override
-    public Restaurant findFirstByRating(double rating) throws BusinessException, NotFoundException {
+    public Restaurant findFirstByOrderByRatingDesc() throws BusinessException, NotFoundException {
         Optional<Restaurant> op = null;
 
         try{
-            op = restaurantDao.findFirstByRating(rating);
+            op = restaurantDao.findFirstByOrderByRatingDesc();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
-            throw new NotFoundException("No hay ningun restaurant cargado");
+            throw new NotFoundException("No se encontro ningun restaurant");
         return op.get();
     }
 
@@ -121,7 +122,27 @@ public class RestaurantBusiness implements IRestaurantBusiness {
         }
         if (!op.isPresent())
             throw new NotFoundException("No hay un registro de la direccion del restaurant con nombre: " + restaurantName);
-        System.out.println("op.get "+ op.get().getAddress());
+
         return op.get().getAddress();
+    }
+
+    @Override
+    public List<Restaurant> findAllByOpeningTimeLessThan(String hour) throws BusinessException, NotFoundException {
+        Optional <List<Restaurant>> op = null;
+
+        try{
+            LocalTime localTime = LocalTime.parse(hour);
+            System.out.println(localTime);
+            op = restaurantDao.findAllByOpeningTimeLessThanEqualAndClosingTimeGreaterThanEqual(localTime);
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            throw new BusinessException(e);
+        }
+        if (!op.isPresent()){
+
+            throw new NotFoundException("Ningun restaurant esta abierto a la hora: " + hour);
+        }
+
+        return op.get();
     }
 }

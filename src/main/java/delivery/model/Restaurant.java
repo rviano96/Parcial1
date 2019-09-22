@@ -23,7 +23,7 @@ public class Restaurant {
     // puntuacion
     private double rating;
     // comidas
-    @ManyToMany(cascade = {CascadeType.MERGE })
+    @OneToMany(cascade = {CascadeType.MERGE })
     @JoinTable(name = "restaurants_foods",
             joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "food_id",

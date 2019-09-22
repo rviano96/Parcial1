@@ -5,12 +5,15 @@ import delivery.business.Exceptions.NotFoundException;
 import delivery.business.IRestaurantBusiness;
 import delivery.model.Restaurant;
 import delivery.web.constants.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -21,8 +24,7 @@ public class RestaurantRestController {
     // -Servicio para modificar un restaurant- STATUS:  DONE
     // -Servicio para eliminar un restaurant- STATUS: DONE
     // -Servicio para consultar el restaurant con mas puntaje- STATUS: IMPROVE
-    // -Servicio para consultar los restaurantes abiertos en un determinado horario
-    // -Servicio pra consultar el listado de comida del restaurant X (No se si hacerlo aca o en el controller de food)
+    // -Servicio para consultar los restaurantes abiertos en un determinado horario status: DONE
     // -Servicio para consultar comida de menor/mayor precio
     // -Servicio para consultar los restaurantes que tiene disponible x comida- STATUS: DONE
     // -Servicio para consultar la direccion de X restaurant- STATUS: DONE
@@ -97,10 +99,11 @@ public class RestaurantRestController {
         }
 
     }
+
     @GetMapping("/mejorPuntaje")
-    public ResponseEntity<Restaurant> findFirstByRating(@RequestParam(value="rating") double rating) {
+    public ResponseEntity<Restaurant> findFirstByRating() {
         try {
-            return new ResponseEntity<Restaurant>(restaurantBusiness.findFirstByRating(rating) ,HttpStatus.OK);
+            return new ResponseEntity<Restaurant>(restaurantBusiness.findFirstByOrderByRatingDesc() ,HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<Restaurant>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {
@@ -116,6 +119,17 @@ public class RestaurantRestController {
             return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {
             return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+
+    }
+    @GetMapping("/abiertos")
+    public ResponseEntity<List<Restaurant>> findByOpeningTimeGreaterThanOrEqualTo(@RequestParam(value="hora") String hour) {
+        try {
+            return new ResponseEntity<List<Restaurant>>(restaurantBusiness.findAllByOpeningTimeLessThan(hour) ,HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<List<Restaurant>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<List<Restaurant>>(HttpStatus.NOT_FOUND);
         }
 
     }

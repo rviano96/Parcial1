@@ -24,14 +24,21 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private RestaurantRepository restaurantDao;
+
     public RestaurantBusiness() {
     }
+
     @Override
     public List<Restaurant> list() throws BusinessException {
         try {
-            return restaurantDao.findAll();
+            List<Restaurant> listaRestaurant = restaurantDao.findAll();
+            log.info("La lista de restaurantes es");
+            for (int i = 0; i < listaRestaurant.size(); i++) {
+                log.info("Restaurante[" + i + "]: " + listaRestaurant.get(i).toString());
+            }
+            return listaRestaurant;
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
     }
@@ -40,24 +47,27 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     public Restaurant load(int idRestaurant) throws BusinessException, NotFoundException {
         Optional<Restaurant> op = null;
 
-        try{
+        try {
             op = restaurantDao.findById(idRestaurant);
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
-        if (!op.isPresent())
-
-            throw new NotFoundException("No se encuentra el restaurant con id=" + idRestaurant);
+        if (!op.isPresent()) {
+            log.error("No se encontro el restaurante con id =  " + idRestaurant);
+            throw new NotFoundException("No se encuentra el restaurant con id = " + idRestaurant);
+        }
+        log.info("Se encontro el restaurante: " + op.get().toString());
         return op.get();
     }
 
     @Override
     public Restaurant save(Restaurant restaurant) throws BusinessException {
         try {
+            log.info("Se guardo correctamente el restaurante: " + restaurant);
             return restaurantDao.save(restaurant);
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
     }
@@ -68,8 +78,9 @@ public class RestaurantBusiness implements IRestaurantBusiness {
         Restaurant rest = load(idRestaurant);
         try {
             restaurantDao.deleteById(idRestaurant);
+            log.info("El restaurante " + rest.getName() + " fue borrado exitosamente");
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
     }
@@ -78,14 +89,16 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     public Restaurant findFirstByOrderByRatingDesc() throws BusinessException, NotFoundException {
         Optional<Restaurant> op = null;
 
-        try{
+        try {
             op = restaurantDao.findFirstByOrderByRatingDesc();
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
-            throw new NotFoundException("No hay ningun restaurant cargado");
+            throw new NotFoundException("No hay ningun restaurante cargado");
+        log.info("Se encontro el restaurante con mayor rating y es: " + op.get().toString());
+
         return op.get();
     }
 
@@ -93,60 +106,67 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     public List<Restaurant> findByFoodsName(String food) throws BusinessException, NotFoundException {
         Optional<List<Restaurant>> op = null;
 
-        try{
+        try {
             op = restaurantDao.findByFoodsName(food);
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
             throw new NotFoundException("No se encontro ningun restaurant");
+        log.info("Se encontro el restaurant" + op.get().toString() + "con la comida " + food);
+
         return op.get();
     }
 
     @Override
     public String findAddressByName(String restaurantName) throws BusinessException, NotFoundException {
-        Optional <Restaurant> op = null;
+        Optional<Restaurant> op = null;
         JSONObject jo;
-        try{
+        try {
             op = restaurantDao.findAddressByName(restaurantName);
             /*jo = new JSONObject(
                     "{\"address\":\""+op.get().getAddress()+"\"}"
             );*/
 
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
             throw new NotFoundException("No hay restaurante con nombre: " + restaurantName);
+        log.info("Se encontro la direccion " + op.get().getAddress() + " para el restaurante " + restaurantName);
 
-       // System.out.println(jo);
+        // System.out.println(jo);
         return op.get().getAddress();
     }
 
     @Override
     public List<Restaurant> findAllByOpeningTimeLessThan(String hour) throws BusinessException, NotFoundException {
 
-            List<Restaurant> list = new ArrayList<>();
-        try{
+        List<Restaurant> list = new ArrayList<>();
+        try {
             LocalTime localTime = LocalTime.parse(hour);
-            for (Restaurant restaurant:restaurantDao.findAll()) {
-                if( (localTime.isAfter( restaurant.getOpeningTime() ) && localTime.isBefore( restaurant.getClosingTime() ))
+            for (Restaurant restaurant : restaurantDao.findAll()) {
+                if ((localTime.isAfter(restaurant.getOpeningTime()) && localTime.isBefore(restaurant.getClosingTime()))
                         ||
-                    ( (restaurant.getOpeningTime().isAfter(restaurant.getClosingTime()) && !(restaurant.getOpeningTime().isAfter(localTime) &&localTime.isAfter(restaurant.getClosingTime()))))) {
+                        ((restaurant.getOpeningTime().isAfter(restaurant.getClosingTime()) && !(restaurant.getOpeningTime().isAfter(localTime) && localTime.isAfter(restaurant.getClosingTime()))))) {
                     list.add(restaurant);
                 }
-
             }
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
-        if (list.isEmpty()){
+        if (list.isEmpty()) {
+            log.error("la lista");
             throw new NotFoundException("Ningun restaurant esta abierto a la hora: " + hour);
         }
 
+        log.info("Los restaurantes abiertos en la hora "+hour+" son ");
+        for(int i = 0 ; i < list.size() ; i++){
+            log.info("Restaurante[ " + i + "]: "+ list.get(i).toString());
+        }
         return list;
     }
 
@@ -156,9 +176,10 @@ public class RestaurantBusiness implements IRestaurantBusiness {
 
             //Restaurant rest = load(restaurant.getId());
             //if(restaurant.)
+            log.info("Se actualizo el restaurante"+restaurant.toString());
             return restaurantDao.save(restaurant);
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
     }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,33 +13,38 @@ import java.util.Set;
 
 @Entity
 @Table(name = "restaurants")
-public class Restaurant {
+@DynamicUpdate
+public class Restaurant implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private int id;
     //nombre
+    @Column(nullable = false)
     private String name;
     //direccion
+    @Column(nullable = false)
     private String address;
     // tipo LocalTime para solo almacenar hora, sin referencia de zona ni de fecha
     //hora de apertura
+    @Column(nullable = false)
     private LocalTime openingTime;
     // hora de cierre
+    @Column(nullable = false)
     private LocalTime closingTime;
     // puntuacion
+    @Column(nullable = false)
     private double rating;
     // comidas
-    @OneToMany(cascade = {CascadeType.MERGE})
-    @JoinColumn(name="restaurant_id")
-    private Set<Food> foods;
+    @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="id")
+    @OneToMany(cascade = CascadeType.ALL, targetEntity=Food.class, mappedBy="restaurant", fetch = FetchType.EAGER)
+    private List<Food> foods = new ArrayList<>();
 
-    public Set<Food> getFoods() {
+    public List<Food> getFoodList() {
         return foods;
     }
 
-    public void setFoods(Set<Food> foods) {
-        this.foods = foods;
-    }
+
 
     public int getId() {
         return id;

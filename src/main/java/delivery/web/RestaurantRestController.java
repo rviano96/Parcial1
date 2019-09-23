@@ -5,6 +5,7 @@ import delivery.business.Exceptions.NotFoundException;
 import delivery.business.IRestaurantBusiness;
 import delivery.model.Restaurant;
 import delivery.web.constants.Constants;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,6 @@ public class RestaurantRestController {
     @PutMapping("")
     public ResponseEntity<String>update(@RequestBody Restaurant restaurant) {
         try {
-           // Restaurant rst = restaurantBusiness.load(restaurant.getId());
 
             restaurantBusiness.update(restaurant);
             return new ResponseEntity<String>(HttpStatus.OK);
@@ -76,6 +76,7 @@ public class RestaurantRestController {
             return new ResponseEntity<List<Restaurant>>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/comida")
     public ResponseEntity<List<Restaurant>> findByFoodsName(@RequestParam( value = "comida") String food) {
 
@@ -113,7 +114,7 @@ public class RestaurantRestController {
     @GetMapping("/direccion")
     public ResponseEntity<String> findAddressByRestaurantName(@RequestParam(value="nombre") String restaurantName) {
         try {
-            return new ResponseEntity<String>(restaurantBusiness.findAddressByName(restaurantName) ,HttpStatus.OK);
+            return new ResponseEntity<String >(restaurantBusiness.findAddressByName(restaurantName),HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {

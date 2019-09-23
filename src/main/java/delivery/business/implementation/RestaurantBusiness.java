@@ -1,5 +1,6 @@
 package delivery.business.implementation;
 
+import org.json.*;
 import delivery.business.Exceptions.BusinessException;
 import delivery.business.Exceptions.NotFoundException;
 import delivery.business.IRestaurantBusiness;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,16 +64,8 @@ public class RestaurantBusiness implements IRestaurantBusiness {
 
     @Override
     public void remove(int idRestaurant) throws BusinessException, NotFoundException {
-        Optional<Restaurant> op = null;
 
-        try{
-            op = restaurantDao.findById(idRestaurant);
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
-            throw new BusinessException(e);
-        }
-        if (!op.isPresent())
-            throw new NotFoundException("No se encuentra el restaurant con id=" + idRestaurant);
+        Restaurant rest = load(idRestaurant);
         try {
             restaurantDao.deleteById(idRestaurant);
         } catch (Exception e) {
@@ -113,42 +107,55 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     @Override
     public String findAddressByName(String restaurantName) throws BusinessException, NotFoundException {
         Optional <Restaurant> op = null;
-
+        JSONObject jo;
         try{
             op = restaurantDao.findAddressByName(restaurantName);
+            /*jo = new JSONObject(
+                    "{\"address\":\""+op.get().getAddress()+"\"}"
+            );*/
+
         }catch (Exception e){
             log.error(e.getMessage(),e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
-            throw new NotFoundException("No hay un registro de la direccion del restaurant con nombre: " + restaurantName);
-        // System.out.println("op.get "+ op.get().getAddress());
+            throw new NotFoundException("No hay restaurante con nombre: " + restaurantName);
+
+       // System.out.println(jo);
         return op.get().getAddress();
     }
 
     @Override
     public List<Restaurant> findAllByOpeningTimeLessThan(String hour) throws BusinessException, NotFoundException {
-        Optional <List<Restaurant>> op = null;
 
+            List<Restaurant> list = new ArrayList<>();
         try{
             LocalTime localTime = LocalTime.parse(hour);
-            System.out.println(localTime);
-            op = restaurantDao.findAllByOpeningTimeLessThanEqualAndClosingTimeGreaterThanEqual(localTime);
+            for (Restaurant restaurant:restaurantDao.findAll()) {
+                if( (localTime.isAfter( restaurant.getOpeningTime() ) && localTime.isBefore( restaurant.getClosingTime() ))
+                        ||
+                    ( (restaurant.getOpeningTime().isAfter(restaurant.getClosingTime()) && !(restaurant.getOpeningTime().isAfter(localTime) &&localTime.isAfter(restaurant.getClosingTime()))))) {
+                    list.add(restaurant);
+                }
+
+            }
         }catch (Exception e){
             log.error(e.getMessage(),e);
             throw new BusinessException(e);
         }
-        if (!op.isPresent()){
-
+        if (list.isEmpty()){
             throw new NotFoundException("Ningun restaurant esta abierto a la hora: " + hour);
         }
 
-        return op.get();
+        return list;
     }
 
     @Override
     public Restaurant update(Restaurant restaurant) throws BusinessException {
         try {
+
+            //Restaurant rest = load(restaurant.getId());
+            //if(restaurant.)
             return restaurantDao.save(restaurant);
         } catch (Exception e) {
             log.error(e.getMessage(),e);

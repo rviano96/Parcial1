@@ -3,8 +3,9 @@ package delivery.persistance;
 import delivery.business.Exceptions.BusinessException;
 import delivery.business.Exceptions.NotFoundException;
 import delivery.model.Restaurant;
-import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;

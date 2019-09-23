@@ -4,36 +4,41 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name="foods")
-public class Food {
+@DynamicUpdate
+public class Food implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private int id;
     // nombre
+    @Column(nullable = false)
     private String name;
     // precio
+    @Column(nullable = false)
     private double price;
     // cantidad (1, 250, 1000, etc)
+    @Column(nullable = false)
     private double quantity;
     // unidad: porcion, gramos, etc
+    @Column(nullable = false)
     private String unit;
 
     //restaurant
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="restaurant_id")
-    @JsonIgnore
     private Restaurant restaurant;
-
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
     }
+
+   /* public Restaurant getRestaurant() {
+        return restaurant;
+    }*/
 
     public int getId() {
         return id;

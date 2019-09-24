@@ -26,13 +26,13 @@ public class FoodBusiness implements IFoodBusiness {
     @Override
     public List<Food> list() throws BusinessException {
         try {
-            log.info("La lista de comidas es");
+            log.info("[FoodBusiness.java] [list()] La lista de comidas es");
             for (int i = 0; i < foodDao.findAll().size(); i++) {
-                log.info("Comida[" + i + "]: " + foodDao.findAll().get(i).toString());
+                log.info("[FoodBusiness.java] [list()] Comida[" + i + "]: " + foodDao.findAll().get(i).toString());
             }
             return foodDao.findAll();
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error("[FoodBusiness.java] [list()] "+e.getMessage(),e);
             throw new BusinessException(e);
         }
     }
@@ -44,11 +44,11 @@ public class FoodBusiness implements IFoodBusiness {
         try{
             op = foodDao.findById(idFood);
         }catch (Exception e){
-            log.error(e.getMessage(),e);
+            log.error("[FoodBusiness.java] [load()] "+e.getMessage(),e);
             throw new BusinessException(e);
         }
         if (!op.isPresent()){
-            log.error("No se encontro la comida con id =  " + idFood);
+            log.error("[FoodBusiness.java] [load()] No se encontro la comida con id =  " + idFood);
             throw new NotFoundException("No se encuentra la comida con id=" + idFood);
         }
 
@@ -58,10 +58,10 @@ public class FoodBusiness implements IFoodBusiness {
     @Override
     public Food save(Food food) throws BusinessException {
         try {
-            log.info("Se guardo correctamente la comida: " + food);
+            log.info("[FoodBusiness.java] [save()] Se guardo correctamente la comida: " + food);
             return foodDao.save(food);
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error("[FoodBusiness.java] [save()] "+e.getMessage(),e);
             throw new BusinessException(e);
         }
     }
@@ -73,16 +73,16 @@ public class FoodBusiness implements IFoodBusiness {
         try{
             op = foodDao.findById(idFood);
         }catch (Exception e){
-            log.error(e.getMessage(),e);
+            log.error("[FoodBusiness.java] [remove()] "+e.getMessage(),e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
             throw new NotFoundException("No se encuentra la comida con id =" + idFood);
         try {
             foodDao.deleteById(idFood);
-            log.info("La comida " + op.get().getName() + " fue borrada exitosamente");
+            log.info("[FoodBusiness.java] [remove()] La comida " + op.get().getName() + " fue borrada exitosamente");
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error("[FoodBusiness.java] [remove()] "+e.getMessage(),e);
             throw new BusinessException(e);
         }
 
@@ -94,16 +94,16 @@ public class FoodBusiness implements IFoodBusiness {
         try{
             op = foodDao.findFoodByRestaurantName(restaurantName);
         }catch (Exception e){
-            log.error(e.getMessage(),e);
+            log.error("[FoodBusiness.java] [findFoodByRestaurantName()] "+e.getMessage(),e);
             throw new BusinessException(e);
         }
         if (!op.isPresent()){
             throw new NotFoundException("Ningun hay comidas para el restaurant: " + restaurantName);
         }
 
-        log.info("Se encontraron las comidas ");
+        log.info("[FoodBusiness.java] [findFoodByRestaurantName()] Se encontraron las comidas ");
         for(int i = 0 ; i < op.get().size() ; i++){
-            log.info("Comida["+i+"]: "+ " para el restaurante "+restaurantName);
+            log.info("[FoodBusiness.java] [findFoodByRestaurantName()] Comida["+i+"]: "+ " para el restaurante "+restaurantName);
         }
         return op.get();
     }

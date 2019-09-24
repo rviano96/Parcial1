@@ -12,6 +12,6 @@ public interface FoodRepository  extends JpaRepository<Food, Integer> {
     //TODO
     // -Definir metodos que sean necesarios segun vimos en clase
 
-    Optional <List<Food>> findFoodByRestaurantName(String restaurantName) ;
+    Optional <List<Food>> findFoodByRestaurantNameOrderByPriceAsc(String restaurantName) ;
 
 }

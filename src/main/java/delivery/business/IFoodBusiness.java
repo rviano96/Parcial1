@@ -49,6 +49,17 @@ public interface IFoodBusiness {
      * @return lista de Food
      * @param restaurantName: El nombre del restaurant a buscar
      * @throws BusinessException
+     * @throws NotFoundException
      */
     public List<Food> findFoodByRestaurantName(String restaurantName) throws BusinessException, NotFoundException;
+
+    /**
+     * @description Devuelve la lista de comidas mas cara o barata de X restaurante
+     * @return lista de Food
+     * @param restaurantName: El nombre del restaurant a buscar
+     * @throws BusinessException
+     * @throws NotFoundException
+     */
+    public List<Food> findFoodPriceByRestaurantName(String restaurantName, String option) throws BusinessException, NotFoundException;
+
 }

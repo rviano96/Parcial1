@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,7 +92,7 @@ public class FoodBusiness implements IFoodBusiness {
         Optional<List<Food>> op;
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try{
-            op = foodDao.findFoodByRestaurantName(restaurantName);
+            op = foodDao.findFoodByRestaurantNameOrderByPriceAsc(restaurantName);
         }catch (Exception e){
             log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [restaurantName: " + restaurantName + "]", e);
             throw new BusinessException(e);
@@ -104,6 +105,48 @@ public class FoodBusiness implements IFoodBusiness {
         log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [comida de ese restaurant " + op.get().toString() + " ] [restaurantName: " + restaurantName + "]" );
 
         return op.get();
+    }
+
+    @Override
+    public List<Food> findFoodPriceByRestaurantName(String restaurantName, String option) throws BusinessException, NotFoundException {
+        List<Food> listFoodOrderedDesc = findFoodByRestaurantName(restaurantName);
+        List<Food> listFoodOption = new ArrayList<>();
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        try{
+            switch (option){
+                case "mayor":
+                    // Como estan ordenados de menor a mayor obtengo el precio del utimo elemento de la lista (o sea el mayor precio)
+                    double maxPrice = listFoodOrderedDesc.get(listFoodOrderedDesc.size() - 1).getPrice();
+                    for(Food food: listFoodOrderedDesc){
+                        if(food.getPrice() == maxPrice){
+                            listFoodOption.add(food);
+                        }
+                    }
+                    break;
+                case    "menor":
+                    // Como estan ordenados de menor a mayor obtengo el precio del primer elemento de la lista (o sea el menor precio)
+                    double minPrice = listFoodOrderedDesc.get(0).getPrice();
+                    for(Food food: listFoodOrderedDesc){
+                        if(food.getPrice() == minPrice){
+                            listFoodOption.add(food);
+                        }
+                    }
+                    break;
+                default:
+                    log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [La opcion para ordenar solo puede ser mayor o menor ] [ restaurantName: " + restaurantName + ", option: " + option + "]" );
+                    throw new BusinessException();
+
+            }
+        }catch (Exception e){
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [restaurantName: " + restaurantName + ", option: " + option + "]", e);
+            throw new BusinessException(e);
+        }
+        if(listFoodOrderedDesc.isEmpty()){
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [No hay ninguna comida para el  restaurante con ese nombre ] [ restaurantName: " + restaurantName + ", option: " + option + "]" );
+            throw new NotFoundException("No hay comidas para el restaurant: " + restaurantName);
+        }
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [comida de ese restaurant ordenadas por el parametro " + listFoodOption.toString() + " ] [restaurantName: " + restaurantName + ", option: " + option + "]" );
+        return listFoodOption;
     }
 
 

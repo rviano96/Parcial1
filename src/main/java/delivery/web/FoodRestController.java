@@ -20,7 +20,8 @@ public class FoodRestController {
     // -Servicio para agregar una comida - DONE
     // -Servicio para modificar una comida - DONE
     // -Servicio para eliminar una comida - DONE
-    // -Servicio para consultar el listado de comida del restaurant X (no se si hacerlo aca o en el controller de restaurant)
+    // -Servicio para consultar el listado de comida del restaurant X- STATUS: DONE
+    // -Servicio para consultar comida de menor/mayor precio segun se requiera en la request.
     @Autowired
     private IFoodBusiness iFoodBusiness;
 
@@ -85,6 +86,18 @@ public class FoodRestController {
 
         try {
             return new ResponseEntity<>(iFoodBusiness.findFoodByRestaurantName(restaurantName) ,HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/restaurant/foodPrice")
+    public ResponseEntity<List<Food>> findFoodPriceByRestaurantName(@RequestParam( value = "restaurant") String restaurantName,@RequestParam( value = "option") String option ) {
+
+        try {
+            return new ResponseEntity<>(iFoodBusiness.findFoodPriceByRestaurantName(restaurantName, option) ,HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {

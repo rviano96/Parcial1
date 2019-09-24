@@ -22,10 +22,8 @@ public class RestaurantRestController {
     // -Servicio para agregar un restaurant- STATUS: DONE
     // -Servicio para modificar un restaurant- STATUS:  DONE
     // -Servicio para eliminar un restaurant- STATUS: DONE
-    // -Servicio para consultar el restaurant con mas puntaje- STATUS: IMPROVE
-    // -Servicio para consultar los restaurantes abiertos en un determinado horario
-    // -Servicio pra consultar el listado de comida del restaurant X (No se si hacerlo aca o en el controller de food)
-    // -Servicio para consultar comida de menor/mayor precio
+    // -Servicio para consultar el restaurant con mas puntaje- STATUS: DONE
+    // -Servicio para consultar los restaurantes abiertos en un determinado horario- STATUS: DONE
     // -Servicio para consultar los restaurantes que tiene disponible x comida- STATUS: DONE
     // -Servicio para consultar la direccion de X restaurant- STATUS: DONE
     @Autowired

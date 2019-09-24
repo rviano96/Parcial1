@@ -32,13 +32,13 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     public List<Restaurant> list() throws BusinessException {
         try {
             List<Restaurant> listaRestaurant = restaurantDao.findAll();
-            log.info("La lista de restaurantes es");
+            log.info("[RestaurantBusiness.java] [list()] La lista de restaurantes es");
             for (int i = 0; i < listaRestaurant.size(); i++) {
-                log.info("Restaurante[" + i + "]: " + listaRestaurant.get(i).toString());
+                log.info("[RestaurantBusiness.java] [list()] Restaurante[" + i + "]: " + listaRestaurant.get(i).toString());
             }
             return listaRestaurant;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
     }
@@ -50,24 +50,24 @@ public class RestaurantBusiness implements IRestaurantBusiness {
         try {
             op = restaurantDao.findById(idRestaurant);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (!op.isPresent()) {
-            log.error("No se encontro el restaurante con id =  " + idRestaurant);
+            log.error("[RestaurantBusiness.java] [load()] No se encontro el restaurante con id =  " + idRestaurant);
             throw new NotFoundException("No se encuentra el restaurant con id = " + idRestaurant);
         }
-        log.info("Se encontro el restaurante: " + op.get().toString());
+        log.info("[RestaurantBusiness.java] [load()] Se encontro el restaurante: " + op.get().toString());
         return op.get();
     }
 
     @Override
     public Restaurant save(Restaurant restaurant) throws BusinessException {
         try {
-            log.info("Se guardo correctamente el restaurante: " + restaurant);
+            log.info("[RestaurantBusiness.java] [save()] Se guardo correctamente el restaurante: " + restaurant);
             return restaurantDao.save(restaurant);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
     }
@@ -78,9 +78,9 @@ public class RestaurantBusiness implements IRestaurantBusiness {
         Restaurant rest = load(idRestaurant);
         try {
             restaurantDao.deleteById(idRestaurant);
-            log.info("El restaurante " + rest.getName() + " fue borrado exitosamente");
+            log.info("[RestaurantBusiness.java] [remove()] El restaurante " + rest.getName() + " fue borrado exitosamente");
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
     }
@@ -92,12 +92,12 @@ public class RestaurantBusiness implements IRestaurantBusiness {
         try {
             op = restaurantDao.findFirstByOrderByRatingDesc();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
             throw new NotFoundException("No hay ningun restaurante cargado");
-        log.info("Se encontro el restaurante con mayor rating y es: " + op.get().toString());
+        log.info("[RestaurantBusiness.java] [findFirstByOrderByRatingDesc()] Se encontro el restaurante con mayor rating y es: " + op.get().toString());
 
         return op.get();
     }
@@ -109,12 +109,12 @@ public class RestaurantBusiness implements IRestaurantBusiness {
         try {
             op = restaurantDao.findByFoodsName(food);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
             throw new NotFoundException("No se encontro ningun restaurant");
-        log.info("Se encontro el restaurant" + op.get().toString() + "con la comida " + food);
+        log.info("[RestaurantBusiness.java] [findByFoodsName()] Se encontro el restaurant" + op.get().toString() + "con la comida " + food);
 
         return op.get();
     }
@@ -130,12 +130,12 @@ public class RestaurantBusiness implements IRestaurantBusiness {
             );*/
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (!op.isPresent())
             throw new NotFoundException("No hay restaurante con nombre: " + restaurantName);
-        log.info("Se encontro la direccion " + op.get().getAddress() + " para el restaurante " + restaurantName);
+        log.info("[RestaurantBusiness.java] [findAddressByName()] Se encontro la direccion " + op.get().getAddress() + " para el restaurante " + restaurantName);
 
         // System.out.println(jo);
         return op.get().getAddress();
@@ -155,17 +155,17 @@ public class RestaurantBusiness implements IRestaurantBusiness {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (list.isEmpty()) {
-            log.error("la lista");
+            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] La lista esta vacia");
             throw new NotFoundException("Ningun restaurant esta abierto a la hora: " + hour);
         }
 
-        log.info("Los restaurantes abiertos en la hora "+hour+" son ");
+        log.info("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] Los restaurantes abiertos en la hora "+hour+" son ");
         for(int i = 0 ; i < list.size() ; i++){
-            log.info("Restaurante[ " + i + "]: "+ list.get(i).toString());
+            log.info("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] Restaurante[ " + i + "]: "+ list.get(i).toString());
         }
         return list;
     }
@@ -176,10 +176,10 @@ public class RestaurantBusiness implements IRestaurantBusiness {
 
             //Restaurant rest = load(restaurant.getId());
             //if(restaurant.)
-            log.info("Se actualizo el restaurante"+restaurant.toString());
+            log.info("[RestaurantBusiness.java] [update()] Se actualizo el restaurante"+restaurant.toString());
             return restaurantDao.save(restaurant);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("[RestaurantBusiness.java] [update()] "+e.getMessage(), e);
             throw new BusinessException(e);
         }
     }

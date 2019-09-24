@@ -3,6 +3,7 @@ package delivery.web;
 import delivery.business.Exceptions.BusinessException;
 import delivery.business.Exceptions.NotFoundException;
 import delivery.business.IRestaurantBusiness;
+import delivery.model.DTO.RestaurantDto;
 import delivery.model.Restaurant;
 import delivery.web.constants.Constants;
 import org.json.JSONObject;
@@ -101,24 +102,24 @@ public class RestaurantRestController {
 
     }
     @GetMapping("/mejorPuntaje")
-    public ResponseEntity<Restaurant> findFirstByOrderByRatingDesc() {
+    public ResponseEntity<List<Restaurant>> findFirstByOrderByRatingDesc() {
         try {
-            return new ResponseEntity<Restaurant>(restaurantBusiness.findFirstByOrderByRatingDesc() ,HttpStatus.OK);
+            return new ResponseEntity<List<Restaurant>>(restaurantBusiness.findByRating() ,HttpStatus.OK);
         } catch (BusinessException e) {
-            return new ResponseEntity<Restaurant>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<List<Restaurant>>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {
-            return new ResponseEntity<Restaurant>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<Restaurant>>(HttpStatus.NOT_FOUND);
         }
 
     }
     @GetMapping("/direccion")
-    public ResponseEntity<String> findAddressByRestaurantName(@RequestParam(value="nombre") String restaurantName) {
+    public ResponseEntity<List<RestaurantDto>> findAddressByRestaurantName(@RequestParam(value="nombre") String restaurantName) {
         try {
-            return new ResponseEntity<String >(restaurantBusiness.findAddressByName(restaurantName),HttpStatus.OK);
+            return new ResponseEntity<List<RestaurantDto> >(restaurantBusiness.findAddressByName(restaurantName),HttpStatus.OK);
         } catch (BusinessException e) {
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<List<RestaurantDto>>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NotFoundException e) {
-            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<RestaurantDto>>(HttpStatus.NOT_FOUND);
         }
 
     }

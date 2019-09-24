@@ -88,7 +88,6 @@ public class Food implements Serializable {
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", unit='" + unit + '\'' +
-                ", restaurant=" + restaurant +
                 '}';
     }
 }

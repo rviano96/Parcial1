@@ -102,8 +102,7 @@ public class Restaurant implements Serializable {
                 ", address='" + address + '\'' +
                 ", openingTime=" + openingTime +
                 ", closingTime=" + closingTime +
-                ", rating=" + rating +
-                ", foods=" + foods +
+                ", rating=" + rating  +
                 '}';
     }
 }

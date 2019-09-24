@@ -19,8 +19,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
 
     Optional <Restaurant> findFirstByOrderByRatingDesc();
     Optional <List<Restaurant>> findByFoodsName(String food) ;
-    Optional <Restaurant> findAddressByName(String restaurantName);
-    @Query(value = "SELECT * FROM restaurants where (opening_time <= ?1 AND closing_time >= ?1 ) or (opening_time > closing_time AND NOT (opening_time > ?1 AND closing_time <= ?1))", nativeQuery =true )
-    Optional  <List<Restaurant>> findAllByOpeningTimeLessThanEqualAndClosingTimeGreaterThanEqual(LocalTime hour);
+    Optional <List<Restaurant>> findAddressByName(String restaurantName);
+    List<Restaurant> findByRating(double rating);
 
 }

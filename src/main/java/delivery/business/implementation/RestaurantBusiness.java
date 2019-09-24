@@ -1,5 +1,6 @@
 package delivery.business.implementation;
 
+import delivery.model.DTO.RestaurantDto;
 import org.json.*;
 import delivery.business.Exceptions.BusinessException;
 import delivery.business.Exceptions.NotFoundException;
@@ -21,7 +22,12 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     //TODO
     // -Implementar metodos de la interfaz IRestaurantBusiness
     // -Siempre usar el log cuando ocurra una excepcion. Solo usar logs en clases de negocio!!
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    /**
+     * FORMATO DE LOGS
+     * dd-MM-YYYY  HH:mm:ss.SSS - [called from] [method executed]  [results] [params]?
+     */
+
+    private Logger log = LoggerFactory.getLogger(RestaurantBusiness.class.getName());
     @Autowired
     private RestaurantRepository restaurantDao;
 
@@ -30,15 +36,13 @@ public class RestaurantBusiness implements IRestaurantBusiness {
 
     @Override
     public List<Restaurant> list() throws BusinessException {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
             List<Restaurant> listaRestaurant = restaurantDao.findAll();
-            log.info("[RestaurantBusiness.java] [list()] La lista de restaurantes es");
-            for (int i = 0; i < listaRestaurant.size(); i++) {
-                log.info("[RestaurantBusiness.java] [list()] Restaurante[" + i + "]: " + listaRestaurant.get(i).toString());
-            }
+            log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ " + listaRestaurant.toString() + " ]" );
             return listaRestaurant;
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] ["+ e.getMessage() + "]", e);
             throw new BusinessException(e);
         }
     }
@@ -46,104 +50,118 @@ public class RestaurantBusiness implements IRestaurantBusiness {
     @Override
     public Restaurant load(int idRestaurant) throws BusinessException, NotFoundException {
         Optional<Restaurant> op = null;
-
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
             op = restaurantDao.findById(idRestaurant);
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] ["+ e.getMessage() + "] [ idRestaurant: "+ idRestaurant + "]", e);
             throw new BusinessException(e);
         }
         if (!op.isPresent()) {
-            log.error("[RestaurantBusiness.java] [load()] No se encontro el restaurante con id =  " + idRestaurant);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ No se encontro el restaurante ese id ] [ idRestaurant: " + idRestaurant +  "]");
             throw new NotFoundException("No se encuentra el restaurant con id = " + idRestaurant);
         }
-        log.info("[RestaurantBusiness.java] [load()] Se encontro el restaurante: " + op.get().toString());
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ " + op.toString() + " ] [idRestaurant: "+ idRestaurant + "]");
         return op.get();
     }
 
     @Override
     public Restaurant save(Restaurant restaurant) throws BusinessException {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
-            log.info("[RestaurantBusiness.java] [save()] Se guardo correctamente el restaurante: " + restaurant);
+
+            log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ Se guardo correctamente: "+ restaurant.toString() + "] [" + restaurant.toString() + "]" );
             return restaurantDao.save(restaurant);
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [" + restaurant.toString() + "]", e);
             throw new BusinessException(e);
         }
     }
 
     @Override
     public void remove(int idRestaurant) throws BusinessException, NotFoundException {
-
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         Restaurant rest = load(idRestaurant);
         try {
             restaurantDao.deleteById(idRestaurant);
-            log.info("[RestaurantBusiness.java] [remove()] El restaurante " + rest.getName() + " fue borrado exitosamente");
+            log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ " + rest.toString() + " fue borrado exitosamente] [" + "idRestaurant: "+ idRestaurant +"]");
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [ idRestaurant: " + idRestaurant + "]", e);
             throw new BusinessException(e);
         }
     }
 
-    @Override
-    public Restaurant findFirstByOrderByRatingDesc() throws BusinessException, NotFoundException {
+    @Override//MODIFICAR!!!
+    public List<Restaurant> findByRating() throws BusinessException, NotFoundException {
         Optional<Restaurant> op = null;
-
+        List<Restaurant> restaurants;
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
             op = restaurantDao.findFirstByOrderByRatingDesc();
+            restaurants = restaurantDao.findByRating(op.get().getRating());
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ]", e);
             throw new BusinessException(e);
         }
-        if (!op.isPresent())
+        if (!op.isPresent()){
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [No hay ningun restaurante cargado]" );
             throw new NotFoundException("No hay ningun restaurante cargado");
-        log.info("[RestaurantBusiness.java] [findFirstByOrderByRatingDesc()] Se encontro el restaurante con mayor rating y es: " + op.get().toString());
+        }
 
-        return op.get();
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [restaurantes con mayor rating: " + restaurants.toString() + " ]" );
+        return restaurants;
     }
 
     @Override
     public List<Restaurant> findByFoodsName(String food) throws BusinessException, NotFoundException {
         Optional<List<Restaurant>> op = null;
-
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
             op = restaurantDao.findByFoodsName(food);
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [food: " + food + "]", e);
             throw new BusinessException(e);
         }
-        if (!op.isPresent())
-            throw new NotFoundException("No se encontro ningun restaurant");
-        log.info("[RestaurantBusiness.java] [findByFoodsName()] Se encontro el restaurant" + op.get().toString() + "con la comida " + food);
+        if (!op.isPresent()){
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [No se encontro ningun restaurant con esa comida. ] [ food:" + food + "]" );
+            throw new NotFoundException("No se encontro ningun restaurant con comida = " + food);
+        }
+
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [restaurantes con esa comida " + op.get().toString() + " ] [food: " + food + "]" );
 
         return op.get();
     }
 
     @Override
-    public String findAddressByName(String restaurantName) throws BusinessException, NotFoundException {
-        Optional<Restaurant> op = null;
+    public List<RestaurantDto> findAddressByName(String restaurantName) throws BusinessException, NotFoundException {
+        Optional<List<Restaurant>> op = null;
+        List<RestaurantDto> restDto = new ArrayList<>();
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         JSONObject jo;
         try {
             op = restaurantDao.findAddressByName(restaurantName);
-            /*jo = new JSONObject(
-                    "{\"address\":\""+op.get().getAddress()+"\"}"
-            );*/
-
+            for( Restaurant restList: op.get()){
+                RestaurantDto restDto2 = new RestaurantDto();
+                restDto2.setAddress(restList.getAddress());
+                restDto.add(restDto2);
+            }
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [name: " + restaurantName + "]", e);
             throw new BusinessException(e);
         }
-        if (!op.isPresent())
+        if (!op.isPresent()){
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [No se encontro ningun restaurant con ese nombre. ] [ name:" + restaurantName + "]" );
             throw new NotFoundException("No hay restaurante con nombre: " + restaurantName);
-        log.info("[RestaurantBusiness.java] [findAddressByName()] Se encontro la direccion " + op.get().getAddress() + " para el restaurante " + restaurantName);
+        }
 
-        // System.out.println(jo);
-        return op.get().getAddress();
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [direcciones de restaurants con ese nombre " + restDto.toString() + " ] [ name:" + restaurantName + "]" );
+
+        return restDto;
     }
 
     @Override
     public List<Restaurant> findAllByOpeningTimeLessThan(String hour) throws BusinessException, NotFoundException {
-
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         List<Restaurant> list = new ArrayList<>();
         try {
             LocalTime localTime = LocalTime.parse(hour);
@@ -155,32 +173,29 @@ public class RestaurantBusiness implements IRestaurantBusiness {
                 }
             }
         } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] "+e.getMessage(), e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [hour: " + hour + "]", e);
             throw new BusinessException(e);
         }
         if (list.isEmpty()) {
-            log.error("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] La lista esta vacia");
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [No se encontro ningun restaurant abierto a esa hora ] [ hour:" + hour + "]" );
             throw new NotFoundException("Ningun restaurant esta abierto a la hora: " + hour);
         }
 
-        log.info("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] Los restaurantes abiertos en la hora "+hour+" son ");
-        for(int i = 0 ; i < list.size() ; i++){
-            log.info("[RestaurantBusiness.java] [findAllByOpeningTimeLessThan()] Restaurante[ " + i + "]: "+ list.get(i).toString());
-        }
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ Restaurants abiertos a esa hora" + list.toString() + " ] [ hour: " + hour + "]" );
+
         return list;
     }
 
     @Override
     public Restaurant update(Restaurant restaurant) throws BusinessException {
-        try {
-
-            //Restaurant rest = load(restaurant.getId());
-            //if(restaurant.)
-            log.info("[RestaurantBusiness.java] [update()] Se actualizo el restaurante"+restaurant.toString());
-            return restaurantDao.save(restaurant);
-        } catch (Exception e) {
-            log.error("[RestaurantBusiness.java] [update()] "+e.getMessage(), e);
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        try{
+            log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ Se modifico correctamente el restaurante: "+ restaurant.toString() + "][ restaurant: " + restaurant.toString() + "]" );
+            return save(restaurant);
+        }catch (Exception e){
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [ restaurant: " + restaurant.toString() + "]", e);
             throw new BusinessException(e);
         }
+
     }
 }

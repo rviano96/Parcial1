@@ -3,6 +3,7 @@ package delivery.business;
 
 import delivery.business.Exceptions.BusinessException;
 import delivery.business.Exceptions.NotFoundException;
+import delivery.model.DTO.RestaurantDto;
 import delivery.model.Restaurant;
 import org.json.JSONObject;
 
@@ -57,11 +58,11 @@ public interface IRestaurantBusiness {
     public void remove(int idRestaurant) throws BusinessException, NotFoundException;
 
     /**
-     * @description Devuelve el restaurante con mejor puntaje.
+     * @description Devuelve el/los rastaurantes con el mejor puntaje
      * @return restaurant
      * @throws BusinessException
      */
-        public Restaurant findFirstByOrderByRatingDesc() throws BusinessException, NotFoundException;
+        public List<Restaurant> findByRating() throws BusinessException, NotFoundException;
 
     /**
      * @description Busca los restaurants que tengan la comida "food"
@@ -79,7 +80,7 @@ public interface IRestaurantBusiness {
      * @throws BusinessException
      * @throws NotFoundException
      */
-    public String findAddressByName(String restaurantName) throws BusinessException, NotFoundException;
+    public List<RestaurantDto> findAddressByName(String restaurantName) throws BusinessException, NotFoundException;
 
     /**
      * @Description Devuelve una lista de restaurants que esten abiertos en el horario que le paso como parametro
@@ -97,4 +98,5 @@ public interface IRestaurantBusiness {
      * @throws BusinessException
      */
     public Restaurant update(Restaurant restaurant) throws BusinessException;
+
 }

@@ -18,50 +18,55 @@ public class FoodBusiness implements IFoodBusiness {
     //TODO
     // -Implementar metodos de la interfaz IFoodBusiness - WIP
     // -Siempre usar el log cuando ocurra una excepcion. Solo usar logs en clases de negocio!!
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    /**
+     * FORMATO DE LOGS
+     * dd-MM-YYYY  HH:mm:ss.SSS - [called from] [method executed]  [results] [params]?
+     */
+    private Logger log = LoggerFactory.getLogger(FoodBusiness.class.getName());
     @Autowired
     private FoodRepository foodDao;
 
 
     @Override
     public List<Food> list() throws BusinessException {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
-            log.info("[FoodBusiness.java] [list()] La lista de comidas es");
-            for (int i = 0; i < foodDao.findAll().size(); i++) {
-                log.info("[FoodBusiness.java] [list()] Comida[" + i + "]: " + foodDao.findAll().get(i).toString());
-            }
-            return foodDao.findAll();
+            List<Food> foodList = foodDao.findAll();
+            log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ " + foodList.toString() + " ]" );
+            return foodList;
         } catch (Exception e) {
-            log.error("[FoodBusiness.java] [list()] "+e.getMessage(),e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] ["+ e.getMessage() + "]", e);
             throw new BusinessException(e);
         }
     }
 
     @Override
     public Food load(int idFood) throws BusinessException, NotFoundException {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         Optional<Food> op;
 
         try{
             op = foodDao.findById(idFood);
         }catch (Exception e){
-            log.error("[FoodBusiness.java] [load()] "+e.getMessage(),e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] ["+ e.getMessage() + "] [ idFood: "+ idFood + "]", e);
             throw new BusinessException(e);
         }
         if (!op.isPresent()){
-            log.error("[FoodBusiness.java] [load()] No se encontro la comida con id =  " + idFood);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ No se encontro la comida con ese id ] [ idFood: " + idFood +  "]");
             throw new NotFoundException("No se encuentra la comida con id=" + idFood);
         }
-
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ " + op.toString() + " ] [idFood: "+ idFood + "]");
         return op.get();
     }
 
     @Override
     public Food save(Food food) throws BusinessException {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try {
-            log.info("[FoodBusiness.java] [save()] Se guardo correctamente la comida: " + food);
+            log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ Se guardo correctamente la comida : "+ food.toString() + "][ food: " + food.toString() + "]" );
             return foodDao.save(food);
         } catch (Exception e) {
-            log.error("[FoodBusiness.java] [save()] "+e.getMessage(),e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [ food: " + food.toString() + "]", e);
             throw new BusinessException(e);
         }
     }
@@ -69,20 +74,13 @@ public class FoodBusiness implements IFoodBusiness {
     @Override
     public void remove(int idFood) throws BusinessException, NotFoundException {
         Optional<Food> op;
-
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try{
             op = foodDao.findById(idFood);
-        }catch (Exception e){
-            log.error("[FoodBusiness.java] [remove()] "+e.getMessage(),e);
-            throw new BusinessException(e);
-        }
-        if (!op.isPresent())
-            throw new NotFoundException("No se encuentra la comida con id =" + idFood);
-        try {
             foodDao.deleteById(idFood);
-            log.info("[FoodBusiness.java] [remove()] La comida " + op.get().getName() + " fue borrada exitosamente");
-        } catch (Exception e) {
-            log.error("[FoodBusiness.java] [remove()] "+e.getMessage(),e);
+            log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ La comida " + op.toString() + " fue borrada exitosamente] [" + "idFood: "+ idFood +"]");
+        }catch (Exception e){
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [ idFood: " + idFood + "]", e);
             throw new BusinessException(e);
         }
 
@@ -91,20 +89,20 @@ public class FoodBusiness implements IFoodBusiness {
     @Override
     public List<Food> findFoodByRestaurantName(String restaurantName) throws BusinessException, NotFoundException {
         Optional<List<Food>> op;
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         try{
             op = foodDao.findFoodByRestaurantName(restaurantName);
         }catch (Exception e){
-            log.error("[FoodBusiness.java] [findFoodByRestaurantName()] "+e.getMessage(),e);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [ "+ e.getMessage() + " ] [restaurantName: " + restaurantName + "]", e);
             throw new BusinessException(e);
         }
         if (!op.isPresent()){
-            throw new NotFoundException("Ningun hay comidas para el restaurant: " + restaurantName);
+            log.error("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [No hay ninguna comida para el  restaurante con ese nombre ] [ restaurantName: " + restaurantName + "]" );
+            throw new NotFoundException("No hay comidas para el restaurant: " + restaurantName);
         }
 
-        log.info("[FoodBusiness.java] [findFoodByRestaurantName()] Se encontraron las comidas ");
-        for(int i = 0 ; i < op.get().size() ; i++){
-            log.info("[FoodBusiness.java] [findFoodByRestaurantName()] Comida["+i+"]: "+ " para el restaurante "+restaurantName);
-        }
+        log.info("[" + stackTraceElements[2] + "] ["+stackTraceElements[1] + "] [comida de ese restaurant " + op.get().toString() + " ] [restaurantName: " + restaurantName + "]" );
+
         return op.get();
     }
 

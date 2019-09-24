@@ -29,7 +29,7 @@ public class Food implements Serializable {
 
     //restaurant
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="restaurant_id")
+    @JoinColumn(name="restaurant_id",nullable = false)
     private Restaurant restaurant;
 
     public void setRestaurant(Restaurant restaurant) {
@@ -78,5 +78,17 @@ public class Food implements Serializable {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    @Override
+    public String toString() {
+        return "Food{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", unit='" + unit + '\'' +
+                ", restaurant=" + restaurant +
+                '}';
     }
 }

@@ -37,7 +37,7 @@ public class Restaurant implements Serializable {
     private double rating;
     // comidas
     @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="id")
-    @OneToMany(cascade = CascadeType.ALL, targetEntity=Food.class, mappedBy="restaurant", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, targetEntity=Food.class, mappedBy="restaurant", fetch = FetchType.EAGER)
     private List<Food> foods = new ArrayList<>();
 
     public List<Food> getFoodList() {
@@ -94,5 +94,16 @@ public class Restaurant implements Serializable {
         this.rating = rating;
     }
 
-
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", openingTime=" + openingTime +
+                ", closingTime=" + closingTime +
+                ", rating=" + rating +
+                ", foods=" + foods +
+                '}';
+    }
 }
